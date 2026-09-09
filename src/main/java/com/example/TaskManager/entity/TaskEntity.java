@@ -37,9 +37,11 @@ public class TaskEntity {
     private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
     private CategoryEntity category ;
 
     public TaskEntity(Long taskId, String title, String description, LocalDateTime dueDate, TaskStatus status, Boolean active, LocalDateTime createdAt, LocalDateTime updatedAt, UserEntity user, CategoryEntity category) {
