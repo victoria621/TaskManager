@@ -42,7 +42,7 @@ public class TaskService {
         task.setCategory(category);
 
         if (task.getStatus() == null) {
-            task.setStatus(TaskStatus.PENDING);
+            task.setStatus(TaskStatus.TODO);
         }
 
         return taskMapper.toDto(taskRepository.save(task));
