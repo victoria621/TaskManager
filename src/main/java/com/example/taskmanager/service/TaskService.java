@@ -9,12 +9,14 @@ import com.example.taskmanager.entity.UserEntity;
 import com.example.taskmanager.exception.ResourceNotFoundException;
 import com.example.taskmanager.mapper.TaskMapper;
 import com.example.taskmanager.repository.TaskRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class TaskService {
 
@@ -34,6 +36,8 @@ public class TaskService {
 
     @Transactional
     public TaskResponse createTask(TaskRequest requestDTO, Long userId) {
+        log.info("Creating task '{}' for user {}", requestDTO.title(), userId);
+
         UserEntity user = userService.findEntityById(userId);
         CategoryEntity category = categoryService.findEntityById(requestDTO.categoryId());
 
@@ -45,46 +49,79 @@ public class TaskService {
             task.setStatus(TaskStatus.TODO);
         }
 
-        return taskMapper.toDto(taskRepository.save(task));
+        TaskEntity saved = taskRepository.save(task);
+        log.info("Task created with id: {}", saved.getTaskId());
+
+        return taskMapper.toDto(saved);
     }
 
     public TaskResponse getTaskById(Long id) {
+        log.debug("Fetching task with id: {}", id);
+
         TaskEntity task = taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, id));
+                .orElseThrow(() -> {
+                    log.error("Task not found with id: {}", id);
+                    return new ResourceNotFoundException(RESOURCE_NAME, id);
+                });
+
         return taskMapper.toDto(task);
     }
 
     public List<TaskResponse> getAllTasks() {
-        return taskRepository.findAll().stream()
+        log.debug("Fetching all tasks");
+
+        List<TaskResponse> tasks = taskRepository.findAll().stream()
                 .map(taskMapper::toDto)
                 .collect(Collectors.toList());
+
+        log.info("Found {} tasks", tasks.size());
+        return tasks;
     }
 
     public List<TaskResponse> getTasksByUser(Long userId) {
+        log.debug("Fetching tasks for user: {}", userId);
+
         userService.findEntityById(userId);
-        return taskRepository.findByUserId(userId).stream()
+
+        List<TaskResponse> tasks = taskRepository.findByUserId(userId).stream()
                 .map(taskMapper::toDto)
                 .collect(Collectors.toList());
+
+        log.info("Found {} tasks for user {}", tasks.size(), userId);
+        return tasks;
     }
 
     public List<TaskResponse> getTasksByUserAndCategory(Long userId, Long categoryId) {
+        log.debug("Fetching tasks for user {} and category {}", userId, categoryId);
+
         userService.findEntityById(userId);
         categoryService.findEntityById(categoryId);
-        return taskRepository.findByUserIdAndCategoryCategoryId(
-                userId, categoryId).stream()
+
+        List<TaskResponse> tasks = taskRepository.findByUserIdAndCategoryCategoryId(userId, categoryId).stream()
                 .map(taskMapper::toDto)
                 .collect(Collectors.toList());
+
+        log.info("Found {} tasks for user {} in category {}", tasks.size(), userId, categoryId);
+        return tasks;
     }
 
     public List<TaskResponse> getTasksByUserAndStatus(Long userId, TaskStatus status) {
+        log.debug("Fetching tasks for user {} with status {}", userId, status);
+
         userService.findEntityById(userId);
-        return taskRepository.findByUserIdAndStatus(userId, status).stream()
+
+        List<TaskResponse> tasks = taskRepository.findByUserIdAndStatus(userId, status).stream()
                 .map(taskMapper::toDto)
                 .collect(Collectors.toList());
+
+        log.info("Found {} tasks for user {} with status {}", tasks.size(), userId, status);
+        return tasks;
     }
 
     @Transactional
     public TaskResponse updateTask(Long id, TaskRequest requestDTO) {
+        log.info("Updating task with id: {}", id);
+
         TaskEntity task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, id));
 
@@ -101,24 +138,36 @@ public class TaskService {
             task.setStatus(requestDTO.status());
         }
 
-        return taskMapper.toDto(taskRepository.save(task));
+        TaskEntity updated = taskRepository.save(task);
+        log.info("Task {} updated successfully", id);
+
+        return taskMapper.toDto(updated);
     }
 
     @Transactional
     public TaskResponse updateTaskStatus(Long id, TaskStatus status) {
+        log.info("Updating status of task {} to {}", id, status);
+
         TaskEntity task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, id));
 
+        TaskStatus oldStatus = task.getStatus();
         task.setStatus(status);
 
-        return taskMapper.toDto(taskRepository.save(task));
+        TaskEntity updated = taskRepository.save(task);
+        log.info("Task {} status changed from {} to {}", id, oldStatus, status);
+
+        return taskMapper.toDto(updated);
     }
 
     @Transactional
     public void deleteTask(Long id) {
+        log.info("Deleting task with id: {}", id);
+
         TaskEntity task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, id));
-        taskRepository.delete(task);
-    }
 
+        taskRepository.delete(task);
+        log.info("Task {} deleted successfully", id);
+    }
 }

@@ -43,10 +43,12 @@ logging:
   level:
     root: INFO
     com.example.taskmanager: DEBUG
+    com.example.taskmanager.service: DEBUG
+    com.example.taskmanager.controller: INFO
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
 springdoc:
   api-docs:
