@@ -9,6 +9,8 @@ import com.example.taskmanager.exception.ResourceNotFoundException;
 import com.example.taskmanager.mapper.UserMapper;
 import com.example.taskmanager.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    @CacheEvict(value = "users", allEntries = true)
     @Transactional
     public UserResponse createUser(UserRequest requestDTO) {
         log.info("Creating user with email: {}", requestDTO.email());
@@ -46,8 +49,9 @@ public class UserService {
         return userMapper.toDto(saved);
     }
 
+    @Cacheable(value = "users", key = "#id")
     public UserResponse getUserById(Long id) {
-        log.debug("Fetching user with id: {}", id);
+        log.info("Fetching user from database with id: {}", id);
 
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> {
@@ -59,7 +63,7 @@ public class UserService {
     }
 
     public UserResponse getUserByEmail(String email) {
-        log.debug("Fetching user with email: {}", email);
+        log.info("Fetching user from database with email: {}", email);
 
         UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
@@ -70,8 +74,9 @@ public class UserService {
         return userMapper.toDto(user);
     }
 
+    @Cacheable(value = "users", key = "'all'")
     public List<UserResponse> getAllUsers() {
-        log.debug("Fetching all users");
+        log.info("Fetching all users from database");
 
         List<UserResponse> users = userRepository.findAll().stream()
                 .map(userMapper::toDto)
@@ -81,6 +86,7 @@ public class UserService {
         return users;
     }
 
+    @CacheEvict(value = "users", allEntries = true)
     @Transactional
     public UserResponse updateUser(Long id, UserRequest requestDTO) {
         log.info("Updating user with id: {}", id);
@@ -104,6 +110,7 @@ public class UserService {
         return userMapper.toDto(updated);
     }
 
+    @CacheEvict(value = "users", allEntries = true)
     @Transactional
     public UserResponse updateUserPassword(Long id, String newPassword) {
         log.info("Updating password for user: {}", id);
@@ -118,6 +125,7 @@ public class UserService {
         return userMapper.toDto(updated);
     }
 
+    @CacheEvict(value = "users", allEntries = true)
     @Transactional
     public void deleteUser(Long id) {
         log.info("Deleting user with id: {}", id);
@@ -134,6 +142,7 @@ public class UserService {
         log.info("User {} deleted successfully", id);
     }
 
+    @CacheEvict(value = "users", allEntries = true)
     @Transactional
     public void activateUser(Long id) {
         log.info("Activating user: {}", id);
@@ -147,6 +156,7 @@ public class UserService {
         log.info("User {} activated", id);
     }
 
+    @CacheEvict(value = "users", allEntries = true)
     @Transactional
     public void deactivateUser(Long id) {
         log.info("Deactivating user: {}", id);
@@ -156,7 +166,7 @@ public class UserService {
 
         user.setActive(false);
         userRepository.save(user);
-        
+
         log.info("User {} deactivated", id);
     }
 

@@ -9,6 +9,8 @@ import com.example.taskmanager.exception.ResourceNotFoundException;
 import com.example.taskmanager.mapper.CategoryMapper;
 import com.example.taskmanager.repository.CategoryRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,7 @@ public class CategoryService {
         this.categoryMapper = categoryMapper;
     }
 
+    @CacheEvict(value = "categories", allEntries = true)
     @Transactional
     public CategoryResponse createCategory(CategoryRequest requestDTO) {
         log.info("Creating category with name: {}", requestDTO.categoryName());
@@ -46,6 +49,7 @@ public class CategoryService {
         return categoryMapper.toDto(saved);
     }
 
+    @Cacheable(value = "categories", key = "#id")
     public CategoryResponse getCategoryById(Long id) {
         log.debug("Fetching category with id: {}", id);
 
@@ -58,6 +62,7 @@ public class CategoryService {
         return categoryMapper.toDto(category);
     }
 
+    @Cacheable(value = "categories", key = "'name:' + #name")
     public CategoryResponse getCategoryByName(String name) {
         log.debug("Fetching category with name: {}", name);
 
@@ -67,6 +72,7 @@ public class CategoryService {
         return categoryMapper.toDto(category);
     }
 
+    @Cacheable(value = "categories", key = "'all'")
     public List<CategoryResponse> getAllCategories() {
         log.debug("Fetching all categories");
 
@@ -78,6 +84,7 @@ public class CategoryService {
         return categories;
     }
 
+    @Cacheable(value = "categories", key = "'active'")
     public List<CategoryResponse> getActiveCategories() {
         log.debug("Fetching active categories");
 
@@ -87,6 +94,7 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
+    @CacheEvict(value = "categories", allEntries = true)
     @Transactional
     public CategoryResponse updateCategory(Long id, CategoryRequest requestDTO) {
         log.info("Updating category with id: {}", id);
@@ -109,6 +117,7 @@ public class CategoryService {
         return categoryMapper.toDto(updated);
     }
 
+    @CacheEvict(value = "categories", allEntries = true)
     @Transactional
     public void deleteCategory(Long id) {
         log.info("Deleting category with id: {}", id);
@@ -125,6 +134,7 @@ public class CategoryService {
         log.info("Category {} deleted successfully", id);
     }
 
+    @CacheEvict(value = "categories", allEntries = true)
     @Transactional
     public void activateCategory(Long id) {
         log.info("Activating category: {}", id);
@@ -138,6 +148,7 @@ public class CategoryService {
         log.info("Category {} activated", id);
     }
 
+    @CacheEvict(value = "categories", allEntries = true)
     @Transactional
     public void deactivateCategory(Long id) {
         log.info("Deactivating category: {}", id);
