@@ -72,9 +72,6 @@ public class UserEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -100,6 +97,10 @@ public class UserEntity {
         this.email = email;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }
@@ -110,6 +111,14 @@ public class UserEntity {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
     public List<TaskEntity> getTasks() {

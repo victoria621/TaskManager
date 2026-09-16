@@ -74,10 +74,6 @@ public class TaskEntity {
         return taskId;
     }
 
-    public void setTaskId(Long taskId) {
-        this.taskId = taskId;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -110,6 +106,14 @@ public class TaskEntity {
         this.status = status;
     }
 
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -118,13 +122,16 @@ public class TaskEntity {
         return updatedAt;
     }
 
-
     public UserEntity getUser() {
         return user;
     }
 
     public void setUser(UserEntity user) {
         this.user = user;
+    }
+
+    public CategoryEntity getCategory() {
+        return category;
     }
 
     public void setCategory(CategoryEntity category) {

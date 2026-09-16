@@ -64,10 +64,6 @@ public class CategoryEntity {
         return categoryId;
     }
 
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
-    }
-
     public String getCategoryName() {
         return categoryName;
     }
@@ -95,7 +91,6 @@ public class CategoryEntity {
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
-
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
