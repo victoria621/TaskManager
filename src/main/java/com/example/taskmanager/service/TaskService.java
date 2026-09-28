@@ -9,6 +9,7 @@ import com.example.taskmanager.entity.UserEntity;
 import com.example.taskmanager.exception.ResourceNotFoundException;
 import com.example.taskmanager.mapper.TaskMapper;
 import com.example.taskmanager.repository.TaskRepository;
+import com.example.taskmanager.strategy.TaskValidationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,14 +25,16 @@ public class TaskService {
     private final TaskMapper taskMapper;
     private final UserService userService;
     private final CategoryService categoryService;
+    private final TaskValidationService taskValidationService;
     private static final String RESOURCE_NAME = "Task";
 
     public TaskService(TaskRepository taskRepository, TaskMapper taskMapper,
-                       UserService userService, CategoryService categoryService) {
+                       UserService userService, CategoryService categoryService, TaskValidationService taskValidationService) {
         this.taskRepository = taskRepository;
         this.taskMapper = taskMapper;
         this.userService = userService;
         this.categoryService = categoryService;
+        this.taskValidationService = taskValidationService;
     }
 
     @Transactional
@@ -48,6 +51,8 @@ public class TaskService {
         if (task.getStatus() == null) {
             task.setStatus(TaskStatus.TODO);
         }
+
+        taskValidationService.validate(task);
 
         TaskEntity saved = taskRepository.save(task);
         log.info("Task created with id: {}", saved.getTaskId());
@@ -137,6 +142,8 @@ public class TaskService {
         if (requestDTO.status() != null) {
             task.setStatus(requestDTO.status());
         }
+
+        taskValidationService.validate(task);
 
         TaskEntity updated = taskRepository.save(task);
         log.info("Task {} updated successfully", id);
