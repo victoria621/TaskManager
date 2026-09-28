@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -161,6 +162,14 @@ public class TaskService {
         TaskStatus oldStatus = task.getStatus();
         task.setStatus(status);
 
+        if (status == TaskStatus.DONE) {
+            task.setCompletedAt(LocalDateTime.now());
+        } else {
+            task.setCompletedAt(null);              
+        }
+
+        taskValidationService.validate(task);
+
         TaskEntity updated = taskRepository.save(task);
         log.info("Task {} status changed from {} to {}", id, oldStatus, status);
 
@@ -178,3 +187,4 @@ public class TaskService {
         log.info("Task {} deleted successfully", id);
     }
 }
+

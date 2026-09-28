@@ -11,6 +11,7 @@ public record TaskResponse(
         LocalDateTime dueDate,
         LocalDateTime createAt,
         LocalDateTime updateAt,
+        LocalDateTime completedAt,
         TaskStatus status,
         UserResponse user,
         CategoryResponse category

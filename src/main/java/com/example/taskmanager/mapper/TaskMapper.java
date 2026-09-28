@@ -31,6 +31,7 @@ public abstract class TaskMapper {
                 entity.getDueDate(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt(),
+                entity.getCompletedAt(),
                 entity.getStatus(),
                 null,
                 null

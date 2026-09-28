@@ -40,10 +40,10 @@ public class UserService {
             throw new ResourceAlreadyExistsException(RESOURCE_NAME, requestDTO.email());
         }
 
-        UserEntity user = userMapper.toEntity(requestDTO);
+        var user = userMapper.toEntity(requestDTO);
         user.setActive(true);
 
-        UserEntity saved = userRepository.save(user);
+        var saved = userRepository.save(user);
         log.info("User created successfully with id: {}", saved.getId());
 
         return userMapper.toDto(saved);
@@ -53,7 +53,7 @@ public class UserService {
     public UserResponse getUserById(Long id) {
         log.info("Fetching user from database with id: {}", id);
 
-        UserEntity user = userRepository.findById(id)
+        var user = userRepository.findById(id)
                 .orElseThrow(() -> {
                     log.error("User not found with id: {}", id);
                     return new ResourceNotFoundException(RESOURCE_NAME, id);
@@ -65,7 +65,7 @@ public class UserService {
     public UserResponse getUserByEmail(String email) {
         log.info("Fetching user from database with email: {}", email);
 
-        UserEntity user = userRepository.findByEmail(email)
+        var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
                     log.error("User not found with email: {}", email);
                     return new ResourceNotFoundException(RESOURCE_NAME, email);
@@ -91,7 +91,7 @@ public class UserService {
     public UserResponse updateUser(Long id, UserRequest requestDTO) {
         log.info("Updating user with id: {}", id);
 
-        UserEntity user = userRepository.findById(id)
+        var user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, id));
 
         if (!user.getEmail().equals(requestDTO.email()) &&
@@ -104,7 +104,7 @@ public class UserService {
         user.setSurname(requestDTO.surname());
         user.setEmail(requestDTO.email());
 
-        UserEntity updated = userRepository.save(user);
+        var updated = userRepository.save(user);
         log.info("User {} updated successfully", id);
 
         return userMapper.toDto(updated);
@@ -115,11 +115,11 @@ public class UserService {
     public UserResponse updateUserPassword(Long id, String newPassword) {
         log.info("Updating password for user: {}", id);
 
-        UserEntity user = userRepository.findById(id)
+        var user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, id));
 
         user.setPassword(newPassword);
-        UserEntity updated = userRepository.save(user);
+        var updated = userRepository.save(user);
 
         log.info("Password updated for user: {}", id);
         return userMapper.toDto(updated);
@@ -130,7 +130,7 @@ public class UserService {
     public void deleteUser(Long id) {
         log.info("Deleting user with id: {}", id);
 
-        UserEntity user = userRepository.findById(id)
+        var user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, id));
 
         if (!user.getTasks().isEmpty()) {
@@ -147,7 +147,7 @@ public class UserService {
     public void activateUser(Long id) {
         log.info("Activating user: {}", id);
 
-        UserEntity user = userRepository.findById(id)
+        var user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, id));
 
         user.setActive(true);
@@ -161,7 +161,7 @@ public class UserService {
     public void deactivateUser(Long id) {
         log.info("Deactivating user: {}", id);
 
-        UserEntity user = userRepository.findById(id)
+        var user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, id));
 
         user.setActive(false);

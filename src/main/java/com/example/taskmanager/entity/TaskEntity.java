@@ -33,6 +33,9 @@ public class TaskEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "completed_at")
+    private LocalDateTime completedAt;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
@@ -41,7 +44,9 @@ public class TaskEntity {
     @JoinColumn(name = "category_id", nullable = false)
     private CategoryEntity category ;
 
-    public TaskEntity(Long taskId, String title, String description, LocalDateTime dueDate, TaskStatus status, Boolean active, LocalDateTime createdAt, LocalDateTime updatedAt, UserEntity user, CategoryEntity category) {
+    public TaskEntity(Long taskId, String title, String description, LocalDateTime dueDate, TaskStatus status,
+                      Boolean active, LocalDateTime createdAt, LocalDateTime updatedAt, UserEntity user,
+                      CategoryEntity category, LocalDateTime completedAt) {
         this.taskId = taskId;
         this.title = title;
         this.description = description;
@@ -52,6 +57,7 @@ public class TaskEntity {
         this.updatedAt = updatedAt;
         this.user = user;
         this.category = category;
+        this.completedAt = completedAt;
     }
 
     public TaskEntity() {}
@@ -137,4 +143,8 @@ public class TaskEntity {
     public void setCategory(CategoryEntity category) {
         this.category = category;
     }
+
+    public LocalDateTime getCompletedAt() {return completedAt;}
+
+    public void setCompletedAt(LocalDateTime completedAt) {this.completedAt = completedAt;}
 }

@@ -87,6 +87,8 @@ springdoc:
   packages-to-scan: com.example.taskmanager.controller
 
 app:
+  cache:
+    enabledd:true
   name: Task Manager
   version: 1.0.0
   api:

@@ -20,7 +20,7 @@ public class DoneValidationStrategy implements TaskValidationStrategy {
     public void validate(TaskEntity task) {
         log.debug("Validating done task {}", task.getTaskId());
 
-        if (task.getCreatedAt() == null) {
+        if (task.getCompletedAt() == null) {
             throw new InvalidOperationException("DONE task must have completedAt date");
         }
     }
